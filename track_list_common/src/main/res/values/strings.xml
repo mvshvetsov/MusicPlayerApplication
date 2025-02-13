@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="track_image">Track image</string>
+    <string name="search_for_a_songs_artists">Search for a songs, artists</string>
+    <string name="search">Search</string>
+    <string name="unknown">Unknown</string>
+</resources>
