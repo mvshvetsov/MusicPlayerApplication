@@ -2,7 +2,7 @@ package ru.shvetsov.remote_music_feature.data.mappers
 
 import ru.shvetsov.remote_music_feature.data.models.Data
 import ru.shvetsov.remote_music_feature.data.models.MusicTrackDetailsResponse
-import ru.shvetsov.track_list_common.model.MusicTrack
+import ru.shvetsov.common.model.MusicTrack
 
 fun Data.toMusicTrackModel(): MusicTrack? {
     val trackId = id ?: return null

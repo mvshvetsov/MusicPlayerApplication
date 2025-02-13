@@ -1,4 +1,4 @@
-package ru.shvetsov.track_list_common.model
+package ru.shvetsov.common.model
 
 data class MusicTrack(
     val id: Long?,

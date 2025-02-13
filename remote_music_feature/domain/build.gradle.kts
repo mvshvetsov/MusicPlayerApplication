@@ -37,7 +37,6 @@ android {
 dependencies {
 
     implementation(project(":common"))
-    implementation(project(":track_list_common"))
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)

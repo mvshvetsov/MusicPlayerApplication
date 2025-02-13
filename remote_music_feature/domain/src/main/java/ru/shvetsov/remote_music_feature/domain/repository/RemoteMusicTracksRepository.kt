@@ -1,6 +1,6 @@
 package ru.shvetsov.remote_music_feature.domain.repository
 
-import ru.shvetsov.track_list_common.model.MusicTrack
+import ru.shvetsov.common.model.MusicTrack
 
 interface RemoteMusicTracksRepository {
 

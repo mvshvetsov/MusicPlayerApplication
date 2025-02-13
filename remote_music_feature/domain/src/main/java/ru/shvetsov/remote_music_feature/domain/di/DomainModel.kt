@@ -38,4 +38,8 @@ object DomainModel {
         baseNetworkUseCase: BaseNetworkUseCase
     ): SearchRemoteMusicTracksUseCase =
         SearchRemoteMusicTracksUseCase(remoteMusicTracksRepository, baseNetworkUseCase)
+
+    @Singleton
+    @Provides
+    fun providesBaseNetworkUseCase(): BaseNetworkUseCase = BaseNetworkUseCase()
 }

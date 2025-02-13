@@ -1,5 +1,6 @@
 package ru.shvetsov.common.utils
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -15,6 +16,7 @@ class BaseNetworkUseCase {
             emit(NetworkResult.Loading())
             val response = request()
             if (response.isSuccess) {
+                Log.d("Search", "$response")
                 emit(NetworkResult.Success(data = response.getOrThrow()))
             } else {
                 emit(NetworkResult.Error(message = response.exceptionOrNull()?.localizedMessage))

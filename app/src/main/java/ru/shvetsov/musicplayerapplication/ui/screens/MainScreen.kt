@@ -1,4 +1,4 @@
-package ru.shvetsov.musicplayerapplication.ui.screen
+package ru.shvetsov.musicplayerapplication.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold

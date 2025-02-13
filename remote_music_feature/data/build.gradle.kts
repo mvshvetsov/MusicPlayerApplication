@@ -37,7 +37,6 @@ android {
 dependencies {
 
     implementation(project(":common"))
-    implementation(project(":track_list_common"))
     implementation(project(":remote_music_feature:domain"))
 
     implementation(libs.androidx.core.ktx)
