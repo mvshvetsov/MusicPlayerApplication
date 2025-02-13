@@ -16,18 +16,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.common.ui.screens.ErrorScreen
 import ru.shvetsov.common.ui.screens.LoadingScreen
+import ru.shvetsov.common.ui.screens.NothingToShowScreen
 import ru.shvetsov.common.utils.UIText
 import ru.shvetsov.track_list_common.R
-import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.track_list_common.screens.music_track.viewmodel.MusicTrackList
 
 @Composable
@@ -37,12 +39,15 @@ fun MusicListScreen(
     onTrackClick: (MusicTrack) -> Unit
 ) {
 
-    val stringQuery = remember { mutableStateOf("") }
+    val stringQuery = rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(key1 = Unit) {
         Log.d("State", "State: $uiState")
-        if (uiState.value.data.isNullOrEmpty()) {
+        if (stringQuery.value.isEmpty()) {
             onEvent(MusicTrackList.Event.FetchRemoteMusicTracks)
+        } else {
+            delay(500)
+            onEvent(MusicTrackList.Event.SearchRemoteTracks(stringQuery.value))
         }
     }
 
@@ -56,13 +61,10 @@ fun MusicListScreen(
         ) {
             TextField(
                 value = stringQuery.value,
-                onValueChange = {
-                    stringQuery.value = it
-                    onEvent(MusicTrackList.Event.SearchRemoteTracks(stringQuery.value))
-                },
+                onValueChange = { stringQuery.value = it },
                 placeholder = {
                     Text(
-                        text = stringResource(R.string.search_for_a_songs_artists_albums),
+                        text = stringResource(R.string.search_for_a_songs_artists),
                         fontSize = 14.sp,
                         color = Color.DarkGray
                     )
@@ -95,13 +97,15 @@ fun MusicListScreen(
                 ErrorScreen(message = uiState.value.error.asString())
             }
 
-            uiState.value.data != null -> {
+            !uiState.value.data.isNullOrEmpty() -> {
                 MusicTrackList(
                     tracks = uiState.value.data!!,
                     onTrackClick = onTrackClick,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
+
+            else -> { NothingToShowScreen() }
         }
     }
 }

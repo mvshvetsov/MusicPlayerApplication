@@ -8,8 +8,7 @@ fun Data.toMusicTrackModel(): MusicTrack? {
     val trackId = id ?: return null
     val trackTitle = title ?: return null
     val artistName = artist?.name ?: return null
-    val coverUrl = album?.cover ?: album?.cover_small ?: album?.cover_medium ?: album?.cover_big
-    ?: album?.cover_xl ?: ""
+    val coverUrl = album?.cover ?: ""
 
     return MusicTrack(
         id = trackId,
@@ -23,8 +22,7 @@ fun MusicTrackDetailsResponse.toMusicTrackModel(): MusicTrack? {
     val trackId = id ?: return null
     val trackTitle = title ?: return null
     val artistName = artist?.name ?: return null
-    val coverUrl = album?.cover ?: album?.cover_small ?: album?.cover_medium ?: album?.cover_big
-    ?: album?.cover_xl ?: ""
+    val coverUrl = album?.cover ?: ""
 
     return MusicTrack(
         id = trackId,
