@@ -41,7 +41,7 @@ fun MusicListScreen(
 
     val stringQuery = rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = stringQuery.value) {
         Log.d("State", "State: $uiState")
         if (stringQuery.value.isEmpty()) {
             onEvent(MusicTrackList.Event.FetchRemoteMusicTracks)
