@@ -54,6 +54,10 @@ android {
 
 dependencies {
 
+    implementation(project(":remote_music_feature:data"))
+    implementation(project(":remote_music_feature:domain"))
+    implementation(project(":track_list_common"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -73,4 +77,5 @@ dependencies {
 
     implementation(libs.com.google.dagger.hilt.android)
     ksp(libs.com.google.dagger.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
