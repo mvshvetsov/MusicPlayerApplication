@@ -5,5 +5,7 @@ data class MusicTrack(
     val title: String?,
     val artist: String?,
     val cover: String?,
-    val duration: Long?
+    val duration: Long?,
+    val albumTitle: String?,
+    val trackPath: String?
 )
