@@ -11,11 +11,20 @@ import ru.shvetsov.musicplayerapplication.navigation.BottomNavigationBar
 import ru.shvetsov.musicplayerapplication.navigation.NavGraph
 
 @Composable
-fun MainScreen(navController: NavHostController = rememberNavController()) {
+fun MainScreen(
+    navController: NavHostController = rememberNavController(),
+    hasPermission: Boolean,
+    onRequestPermission: () -> Unit
+) {
     Scaffold(
         containerColor = Color.White,
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { paddingValues ->
-        NavGraph(navHostController = navController, modifier = Modifier.padding(paddingValues))
+        NavGraph(
+            navHostController = navController,
+            modifier = Modifier.padding(paddingValues),
+            hasPermission = hasPermission,
+            onRequestPermission = onRequestPermission
+        )
     }
 }
