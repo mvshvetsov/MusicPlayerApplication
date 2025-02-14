@@ -30,14 +30,4 @@ class RemoteMusicTracksRepositoryImpl @Inject constructor(
             }
         )
     }
-
-
-    override suspend fun getMusicTrackById(id: Long): Result<MusicTrack> {
-        return handleApiCall(
-            api = { remoteMusicTracksService.getMusicTrackById(id) },
-            mapper = { response ->
-                response.toMusicTrackModel() ?: throw Exception("Music track not found")
-            }
-        )
-    }
 }

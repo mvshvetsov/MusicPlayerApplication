@@ -7,6 +7,4 @@ interface RemoteMusicTracksRepository {
     suspend fun fetchMusicTracks(): Result<List<MusicTrack>>
 
     suspend fun searchMusicTracks(query: String): Result<List<MusicTrack>>
-
-    suspend fun getMusicTrackById(id: Long): Result<MusicTrack>
 }
