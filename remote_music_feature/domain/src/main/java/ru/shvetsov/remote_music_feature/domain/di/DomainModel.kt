@@ -7,7 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import ru.shvetsov.common.utils.BaseNetworkUseCase
 import ru.shvetsov.remote_music_feature.domain.repository.RemoteMusicTracksRepository
 import ru.shvetsov.remote_music_feature.domain.use_cases.FetchRemoteMusicTracksUseCase
-import ru.shvetsov.remote_music_feature.domain.use_cases.GetRemoteMusicTrackByIdUseCase
 import ru.shvetsov.remote_music_feature.domain.use_cases.SearchRemoteMusicTracksUseCase
 import javax.inject.Singleton
 
@@ -22,14 +21,6 @@ object DomainModel {
         baseNetworkUseCase: BaseNetworkUseCase
     ): FetchRemoteMusicTracksUseCase =
         FetchRemoteMusicTracksUseCase(remoteMusicTracksRepository, baseNetworkUseCase)
-
-    @Singleton
-    @Provides
-    fun providesGetRemoteMusicTrackByIdUseCase(
-        remoteMusicTracksRepository: RemoteMusicTracksRepository,
-        baseNetworkUseCase: BaseNetworkUseCase
-    ): GetRemoteMusicTrackByIdUseCase =
-        GetRemoteMusicTrackByIdUseCase(remoteMusicTracksRepository, baseNetworkUseCase)
 
     @Singleton
     @Provides
