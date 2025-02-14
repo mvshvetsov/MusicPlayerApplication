@@ -38,6 +38,7 @@ dependencies {
 
     implementation(project(":common"))
     implementation(project(":remote_music_feature:domain"))
+    implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
@@ -45,11 +46,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.com.squareup.retrofit2)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     implementation(libs.com.google.dagger.hilt.android)
     ksp(libs.com.google.dagger.hilt.compiler)
-
-    implementation(libs.com.squareup.okhhtp3)
-    implementation(libs.com.squareup.okhhtp3.logging.interceptor)
 }
