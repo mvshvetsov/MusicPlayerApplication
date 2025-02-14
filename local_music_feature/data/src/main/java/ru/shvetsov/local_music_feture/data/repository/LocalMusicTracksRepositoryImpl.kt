@@ -25,7 +25,8 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.DURATION
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Albums.ALBUM
         )
 
         context.contentResolver.query(
@@ -39,6 +40,7 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
             val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
             val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
             val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+            val albumTitleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)
 
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
@@ -46,11 +48,16 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
                 val artist = cursor.getString(artistColumn)
                 val albumId = cursor.getLong(albumIdColumn)
                 val duration = cursor.getLong(durationColumn)
+                val albumTitle = cursor.getString(albumTitleColumn)
                 val albumUri = ContentUris.withAppendedId(
                     MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId
                 ).toString()
-                Log.d("uri", "Album Uri: $albumUri")
-                musicTracks.add(MusicTrack(id, title, artist, albumUri, duration))
+                val trackUri = ContentUris.withAppendedId(
+                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, id
+                ).toString()
+                Log.d("local_track", "Track Uri: $trackUri")
+                Log.d("local_track", "Album Title: $albumTitle")
+                musicTracks.add(MusicTrack(id, title, artist, albumUri, duration, albumTitle, trackUri))
             }
         }
         return musicTracks
