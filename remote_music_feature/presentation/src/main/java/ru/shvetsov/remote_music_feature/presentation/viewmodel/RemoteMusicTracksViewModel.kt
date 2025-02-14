@@ -1,4 +1,4 @@
-package ru.shvetsov.track_list_common.screens.music_track.viewmodel
+package ru.shvetsov.remote_music_feature.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -14,25 +14,26 @@ import ru.shvetsov.common.utils.NetworkResult
 import ru.shvetsov.common.utils.UIText
 import ru.shvetsov.remote_music_feature.domain.use_cases.FetchRemoteMusicTracksUseCase
 import ru.shvetsov.remote_music_feature.domain.use_cases.SearchRemoteMusicTracksUseCase
-import ru.shvetsov.common.model.MusicTrack
+import ru.shvetsov.track_list_common.event.MusicTrackEvent
+import ru.shvetsov.track_list_common.state.MusicTrackUiState
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicTracksViewModel @Inject constructor(
+class RemoteMusicTracksViewModel @Inject constructor(
     private val fetchRemoteMusicTracksUseCase: FetchRemoteMusicTracksUseCase,
     private val searchRemoteMusicTracksUseCase: SearchRemoteMusicTracksUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MusicTrackList.UiState())
+    private val _uiState = MutableStateFlow(MusicTrackUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onEvent(event: MusicTrackList.Event) {
+    fun onEvent(event: MusicTrackEvent) {
         when (event) {
-            is MusicTrackList.Event.FetchRemoteMusicTracks -> {
+            is MusicTrackEvent.FetchTracks -> {
                 fetchRemoteMusicTracks()
             }
 
-            is MusicTrackList.Event.SearchRemoteTracks -> {
+            is MusicTrackEvent.SearchTracks -> {
                 searchRemoteMusicTracks(event.query)
             }
         }
@@ -56,7 +57,6 @@ class MusicTracksViewModel @Inject constructor(
     }
 
     private fun searchRemoteMusicTracks(query: String) = viewModelScope.launch {
-        Log.d("Search", "Search query: $query")
         searchRemoteMusicTracksUseCase.invoke(query)
             .onEach { result ->
                 _uiState.update {
@@ -66,6 +66,7 @@ class MusicTracksViewModel @Inject constructor(
                             isLoading = false,
                             error = UIText.RemoteString(result.message.toString())
                         )
+
                         is NetworkResult.Success -> {
                             Log.d("Search", "Search result: ${result.data}")
                             it.copy(isLoading = false, data = result.data)
@@ -73,19 +74,5 @@ class MusicTracksViewModel @Inject constructor(
                     }
                 }
             }.launchIn(viewModelScope)
-    }
-}
-
-object MusicTrackList {
-
-    data class UiState(
-        val isLoading: Boolean = false,
-        val error: UIText = UIText.EmptyString,
-        val data: List<MusicTrack>? = null
-    )
-
-    sealed interface Event {
-        data object FetchRemoteMusicTracks : Event
-        data class SearchRemoteTracks(val query: String) : Event
     }
 }

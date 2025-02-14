@@ -1,6 +1,5 @@
 package ru.shvetsov.track_list_common.screens.music_track
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,24 +29,24 @@ import ru.shvetsov.common.ui.screens.LoadingScreen
 import ru.shvetsov.common.ui.screens.NothingToShowScreen
 import ru.shvetsov.common.utils.UIText
 import ru.shvetsov.track_list_common.R
-import ru.shvetsov.track_list_common.screens.music_track.viewmodel.MusicTrackList
+import ru.shvetsov.track_list_common.event.MusicTrackEvent
+import ru.shvetsov.track_list_common.state.MusicTrackUiState
 
 @Composable
 fun MusicListScreen(
-    uiState: State<MusicTrackList.UiState>,
-    onEvent: (MusicTrackList.Event) -> Unit,
+    uiState: State<MusicTrackUiState>,
+    onEvent: (MusicTrackEvent) -> Unit,
     onTrackClick: (MusicTrack) -> Unit
 ) {
 
     val stringQuery = rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(key1 = stringQuery.value) {
-        Log.d("State", "State: $uiState")
+        delay(500)
         if (stringQuery.value.isEmpty()) {
-            onEvent(MusicTrackList.Event.FetchRemoteMusicTracks)
+            onEvent(MusicTrackEvent.FetchTracks)
         } else {
-            delay(500)
-            onEvent(MusicTrackList.Event.SearchRemoteTracks(stringQuery.value))
+            onEvent(MusicTrackEvent.SearchTracks(stringQuery.value))
         }
     }
 
@@ -94,10 +93,10 @@ fun MusicListScreen(
             }
 
             uiState.value.error !is UIText.EmptyString -> {
-                ErrorScreen(message = uiState.value.error.asString())
+                ErrorScreen(message = uiState.value.error!!.asString())
             }
 
-            !uiState.value.data.isNullOrEmpty() -> {
+            uiState.value.data != null -> {
                 MusicTrackList(
                     tracks = uiState.value.data!!,
                     onTrackClick = onTrackClick,
@@ -105,7 +104,9 @@ fun MusicListScreen(
                 )
             }
 
-            else -> { NothingToShowScreen() }
+            else -> {
+                NothingToShowScreen()
+            }
         }
     }
 }

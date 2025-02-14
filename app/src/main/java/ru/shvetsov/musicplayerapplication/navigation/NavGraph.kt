@@ -7,13 +7,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import ru.shvetsov.common.ui.screens.PermissionRequestScreen
+import ru.shvetsov.local_music_feature.presentation.LocalMusicTracksViewModel
+import ru.shvetsov.remote_music_feature.presentation.viewmodel.RemoteMusicTracksViewModel
 import ru.shvetsov.track_list_common.screens.music_track.MusicListScreen
-import ru.shvetsov.track_list_common.screens.music_track.viewmodel.MusicTracksViewModel
 
 @Composable
 fun NavGraph(
     navHostController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hasPermission: Boolean,
+    onRequestPermission: () -> Unit
 ) {
 
     NavHost(
@@ -22,10 +26,24 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(Screen.RemoteMusic.route) {
-            val viewModel = hiltViewModel<MusicTracksViewModel>()
-            val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-            MusicListScreen(uiState = uiState, onEvent = viewModel::onEvent, onTrackClick = {})
+            val remoteMusicTracksViewModel = hiltViewModel<RemoteMusicTracksViewModel>()
+            val remoteUiState = remoteMusicTracksViewModel.uiState.collectAsStateWithLifecycle()
+            MusicListScreen(
+                uiState = remoteUiState,
+                onEvent = remoteMusicTracksViewModel::onEvent,
+                onTrackClick = {})
         }
-        composable(Screen.LocalMusic.route) { }
+        composable(Screen.LocalMusic.route) {
+            if (hasPermission) {
+                val localViewModel = hiltViewModel<LocalMusicTracksViewModel>()
+                val localUiState = localViewModel.uiState.collectAsStateWithLifecycle()
+                MusicListScreen(
+                    uiState = localUiState,
+                    onEvent = localViewModel::onEvent,
+                    onTrackClick = {})
+            } else {
+                PermissionRequestScreen(onRequestPermission)
+            }
+        }
     }
 }

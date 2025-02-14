@@ -45,6 +45,7 @@ dependencies {
 
     implementation(project(":common"))
     implementation(project(":remote_music_feature:domain"))
+    implementation(project(":local_music_feature:domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
