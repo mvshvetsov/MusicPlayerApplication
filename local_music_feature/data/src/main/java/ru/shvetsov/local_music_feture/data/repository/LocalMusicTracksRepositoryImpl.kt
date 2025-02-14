@@ -2,7 +2,9 @@ package ru.shvetsov.local_music_feture.data.repository
 
 import android.content.ContentUris
 import android.content.Context
+import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.local_music_feature.domain.repository.LocalMusicTracksRepository
@@ -14,7 +16,9 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
 
     override fun fetchMusicTracks(): List<MusicTrack> {
         val musicTracks = mutableListOf<MusicTrack>()
-        val queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val queryUri = if (Build.VERSION.SDK_INT >= 29) {
+            MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else MediaStore.Audio.Media.getContentUri("external")
 
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
@@ -43,8 +47,9 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
                 val albumId = cursor.getLong(albumIdColumn)
                 val duration = cursor.getLong(durationColumn)
                 val albumUri = ContentUris.withAppendedId(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, albumId
+                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId
                 ).toString()
+                Log.d("uri", "Album Uri: $albumUri")
                 musicTracks.add(MusicTrack(id, title, artist, albumUri, duration))
             }
         }
