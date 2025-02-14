@@ -14,15 +14,21 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.common.ui.screens.ErrorScreen
 import ru.shvetsov.common.ui.screens.LoadingScreen
@@ -40,13 +46,12 @@ fun MusicListScreen(
 ) {
 
     val stringQuery = rememberSaveable { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    var searchJob by remember { mutableStateOf<Job?>(null) }
 
-    LaunchedEffect(key1 = stringQuery.value) {
-        delay(500)
-        if (stringQuery.value.isEmpty()) {
+    LaunchedEffect(key1 = uiState.value.data, key2 = stringQuery.value) {
+        if (uiState.value.data.isNullOrEmpty() && stringQuery.value.isEmpty()) {
             onEvent(MusicTrackEvent.FetchTracks)
-        } else {
-            onEvent(MusicTrackEvent.SearchTracks(stringQuery.value))
         }
     }
 
@@ -60,7 +65,18 @@ fun MusicListScreen(
         ) {
             TextField(
                 value = stringQuery.value,
-                onValueChange = { stringQuery.value = it },
+                onValueChange = {
+                    stringQuery.value = it
+                    searchJob?.cancel()
+                    searchJob = coroutineScope.launch {
+                        delay(500)
+                        if (it.isEmpty()) {
+                            onEvent(MusicTrackEvent.FetchTracks)
+                        } else {
+                            onEvent(MusicTrackEvent.SearchTracks(it))
+                        }
+                    }
+                },
                 placeholder = {
                     Text(
                         text = stringResource(R.string.search_for_a_songs_artists),
@@ -86,27 +102,54 @@ fun MusicListScreen(
         }
     }
     ) { paddingValues ->
-
         when {
             uiState.value.isLoading -> {
                 LoadingScreen()
             }
-
             uiState.value.error !is UIText.EmptyString -> {
                 ErrorScreen(message = uiState.value.error!!.asString())
             }
-
-            uiState.value.data != null -> {
+            uiState.value.data.isNullOrEmpty() -> {
+                NothingToShowScreen()
+            }
+            else -> {
                 MusicTrackList(
                     tracks = uiState.value.data!!,
                     onTrackClick = onTrackClick,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
-
-            else -> {
-                NothingToShowScreen()
-            }
         }
     }
 }
+
+//        when {
+//            uiState.value.isLoading -> {
+//                LoadingScreen()
+//            }
+//
+//            uiState.value.error !is UIText.EmptyString -> {
+//                ErrorScreen(message = uiState.value.error!!.asString())
+//            }
+//
+//            uiState.value.data != null -> {
+//                if (uiState.value.data!!.isEmpty()) {
+//                    NothingToShowScreen()
+//                } else {
+//                    MusicTrackList(
+//                        tracks = uiState.value.data!!,
+//                        onTrackClick = onTrackClick,
+//                        modifier = Modifier.padding(paddingValues)
+//                    )
+//                }
+//            }
+//        }
+
+//    LaunchedEffect(key1 = stringQuery.value) {
+//        delay(500)
+//        if (stringQuery.value.isEmpty()) {
+//            onEvent(MusicTrackEvent.FetchTracks)
+//        } else {
+//            onEvent(MusicTrackEvent.SearchTracks(stringQuery.value))
+//        }
+//    }

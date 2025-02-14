@@ -1,9 +1,9 @@
 package ru.shvetsov.remote_music_feature.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -39,40 +39,48 @@ class RemoteMusicTracksViewModel @Inject constructor(
         }
     }
 
-    private fun fetchRemoteMusicTracks() = viewModelScope.launch {
-        fetchRemoteMusicTracksUseCase.invoke()
-            .onEach { result ->
-                _uiState.update {
-                    when (result) {
-                        is NetworkResult.Loading -> it.copy(isLoading = true)
-                        is NetworkResult.Error -> it.copy(
-                            isLoading = false,
-                            error = UIText.RemoteString(result.message.toString())
-                        )
+    private fun fetchRemoteMusicTracks() = executeUseCase(
+        useCase = { fetchRemoteMusicTracksUseCase.invoke() },
+        updateUiState = { isLoading, error, data ->
+            _uiState.update {
+                it.copy(
+                    isLoading = isLoading,
+                    error = error ?: UIText.EmptyString,
+                    data = data ?: it.data
+                )
+            }
+        }
+    )
 
-                        is NetworkResult.Success -> it.copy(isLoading = false, data = result.data)
-                    }
+    private fun searchRemoteMusicTracks(query: String) = executeUseCase(
+        useCase = { searchRemoteMusicTracksUseCase.invoke(query) },
+        updateUiState = { isLoading, error, data ->
+            _uiState.update {
+                it.copy(
+                    isLoading = isLoading,
+                    error = error ?: UIText.EmptyString,
+                    data = data ?: emptyList()
+                )
+            }
+        }
+    )
+
+    private fun <T> executeUseCase(
+        useCase: suspend () -> Flow<NetworkResult<T>>,
+        updateUiState: (isLoading: Boolean, error: UIText?, data: T?) -> Unit
+    ) {
+        viewModelScope.launch {
+            useCase().onEach { result ->
+                when (result) {
+                    is NetworkResult.Loading -> updateUiState(true, null, null)
+                    is NetworkResult.Error -> updateUiState(
+                        false,
+                        UIText.RemoteString(result.message.toString()),
+                        null
+                    )
+                    is NetworkResult.Success -> updateUiState(false, null, result.data)
                 }
             }.launchIn(viewModelScope)
-    }
-
-    private fun searchRemoteMusicTracks(query: String) = viewModelScope.launch {
-        searchRemoteMusicTracksUseCase.invoke(query)
-            .onEach { result ->
-                _uiState.update {
-                    when (result) {
-                        is NetworkResult.Loading -> it.copy(isLoading = true)
-                        is NetworkResult.Error -> it.copy(
-                            isLoading = false,
-                            error = UIText.RemoteString(result.message.toString())
-                        )
-
-                        is NetworkResult.Success -> {
-                            Log.d("Search", "Search result: ${result.data}")
-                            it.copy(isLoading = false, data = result.data)
-                        }
-                    }
-                }
-            }.launchIn(viewModelScope)
+        }
     }
 }
