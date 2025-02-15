@@ -1,6 +1,6 @@
 package ru.shvetsov.remote_music_feature.data.mappers
 
-import android.util.Log
+import ru.shvetsov.common.enums.TrackSource
 import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.remote_music_feature.data.models.Data
 
@@ -13,6 +13,7 @@ fun Data.toMusicTrackModel(): MusicTrack? {
         id = trackId,
         title = trackTitle,
         artist = artistName,
-        cover = coverUrl
+        cover = coverUrl,
+        source = TrackSource.API
     )
 }
