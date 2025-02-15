@@ -5,8 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.common.ui.screens.PermissionRequestScreen
 import ru.shvetsov.local_music_feature.presentation.LocalMusicTracksViewModel
 import ru.shvetsov.remote_music_feature.presentation.viewmodel.RemoteMusicTracksViewModel
@@ -31,7 +35,10 @@ fun NavGraph(
             MusicListScreen(
                 uiState = remoteUiState,
                 onEvent = remoteMusicTracksViewModel::onEvent,
-                onTrackClick = {})
+                onTrackClick = { trackList ->
+                    navHostController.navigate(Screen.MusicPlayer.createRoute(trackList))
+                }
+            )
         }
         composable(Screen.LocalMusic.route) {
             if (hasPermission) {
@@ -40,10 +47,23 @@ fun NavGraph(
                 MusicListScreen(
                     uiState = localUiState,
                     onEvent = localViewModel::onEvent,
-                    onTrackClick = {})
+                    onTrackClick = { trackList ->
+                        navHostController.navigate(Screen.MusicPlayer.createRoute(trackList))
+                    }
+                )
             } else {
                 PermissionRequestScreen(onRequestPermission)
             }
+        }
+        composable(
+            Screen.MusicPlayer.route,
+            arguments = listOf(navArgument("trackList") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val trackListJson = backStackEntry.arguments?.getString("trackList") ?: ""
+            val trackList = Gson().fromJson(trackListJson, Array<MusicTrack>::class.java).toList()
+            //MusicPlayerScreen(trackList)
         }
     }
 }

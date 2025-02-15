@@ -30,14 +30,18 @@ import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.track_list_common.R
 
 @Composable
-fun MusicTrackItem(musicTrack: MusicTrack, onTrackClick: (MusicTrack) -> Unit) {
+fun MusicTrackItem(
+    musicTrack: MusicTrack,
+    trackList: List<MusicTrack>,
+    onTrackClick: (List<MusicTrack>) -> Unit
+) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onTrackClick(musicTrack) }
+            .clickable { onTrackClick(trackList) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
