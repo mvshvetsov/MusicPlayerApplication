@@ -42,7 +42,7 @@ import ru.shvetsov.track_list_common.state.MusicTrackUiState
 fun MusicListScreen(
     uiState: State<MusicTrackUiState>,
     onEvent: (MusicTrackEvent) -> Unit,
-    onTrackClick: (MusicTrack) -> Unit
+    onTrackClick: (List<MusicTrack>) -> Unit
 ) {
 
     val stringQuery = rememberSaveable { mutableStateOf("") }
@@ -122,34 +122,3 @@ fun MusicListScreen(
         }
     }
 }
-
-//        when {
-//            uiState.value.isLoading -> {
-//                LoadingScreen()
-//            }
-//
-//            uiState.value.error !is UIText.EmptyString -> {
-//                ErrorScreen(message = uiState.value.error!!.asString())
-//            }
-//
-//            uiState.value.data != null -> {
-//                if (uiState.value.data!!.isEmpty()) {
-//                    NothingToShowScreen()
-//                } else {
-//                    MusicTrackList(
-//                        tracks = uiState.value.data!!,
-//                        onTrackClick = onTrackClick,
-//                        modifier = Modifier.padding(paddingValues)
-//                    )
-//                }
-//            }
-//        }
-
-//    LaunchedEffect(key1 = stringQuery.value) {
-//        delay(500)
-//        if (stringQuery.value.isEmpty()) {
-//            onEvent(MusicTrackEvent.FetchTracks)
-//        } else {
-//            onEvent(MusicTrackEvent.SearchTracks(stringQuery.value))
-//        }
-//    }
