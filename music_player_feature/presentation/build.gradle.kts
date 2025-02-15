@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -34,10 +37,21 @@ android {
 
 dependencies {
 
+    implementation(project(":common"))
+    implementation(project(":music_player_feature:domain"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.io.coilkt.coil3.compose)
+    implementation(libs.io.coilkt.coil3.network.okhttp)
+
+    implementation(libs.com.google.dagger.hilt.android)
+    ksp(libs.com.google.dagger.hilt.compiler)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
