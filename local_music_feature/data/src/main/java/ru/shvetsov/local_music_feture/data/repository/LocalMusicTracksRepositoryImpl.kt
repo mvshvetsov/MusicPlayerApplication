@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import ru.shvetsov.common.enums.TrackSource
 import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.local_music_feature.domain.repository.LocalMusicTracksRepository
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class LocalMusicTracksRepositoryImpl @Inject constructor(
                 val albumUri = ContentUris.withAppendedId(
                     MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId
                 ).toString()
-                musicTracks.add(MusicTrack(id, title, artist, albumUri))
+                musicTracks.add(MusicTrack(id, title, artist, albumUri, TrackSource.LOCAL))
             }
         }
         return musicTracks
