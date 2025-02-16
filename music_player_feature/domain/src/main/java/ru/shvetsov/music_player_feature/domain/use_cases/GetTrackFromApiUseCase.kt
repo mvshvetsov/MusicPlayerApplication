@@ -9,5 +9,5 @@ class GetTrackFromApiUseCase @Inject constructor(
     private val baseNetworkUseCase: BaseNetworkUseCase
 ) {
 
-    fun invoke(id: Int) = baseNetworkUseCase.handleRequest { musicPlayerRepository.getTrackFromApi(id) }
+    fun invoke(id: Long) = baseNetworkUseCase.handleRequest { musicPlayerRepository.getTrackFromApi(id) }
 }

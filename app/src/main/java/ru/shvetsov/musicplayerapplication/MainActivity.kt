@@ -18,24 +18,30 @@ import ru.shvetsov.musicplayerapplication.ui.screens.MusicApp
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private var hasPermission by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val permission = if (Build.VERSION.SDK_INT >= 33) {
-            Manifest.permission.READ_MEDIA_AUDIO
+            arrayOf(
+                Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
         }
 
-        hasPermission =
-            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+        hasPermission = permission.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
 
         permissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                hasPermission = isGranted
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { isGranted ->
+                hasPermission = isGranted.all { it.value }
             }
 
         if (!hasPermission) {

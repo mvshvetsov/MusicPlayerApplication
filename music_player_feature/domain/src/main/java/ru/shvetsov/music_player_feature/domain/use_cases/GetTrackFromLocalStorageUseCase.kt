@@ -7,5 +7,5 @@ class GetTrackFromLocalStorageUseCase @Inject constructor(
     private val musicPlayerRepository: MusicPlayerRepository
 ) {
 
-    suspend fun invoke(id: Long) = musicPlayerRepository.getTrackFromLocalStorage(id)
+   fun invoke(id: Long) = musicPlayerRepository.getTrackFromLocalStorage(id)
 }

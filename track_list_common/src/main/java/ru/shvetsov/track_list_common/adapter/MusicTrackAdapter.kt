@@ -8,7 +8,7 @@ import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.track_list_common.screens.music_track.MusicTrackItem
 
 class MusicTrackAdapter(
-    private val onTrackClick: (List<MusicTrack>) -> Unit
+    private val onTrackClick: (Int, List<MusicTrack>) -> Unit
 ) : RecyclerView.Adapter<MusicTrackAdapter.ViewHolder>() {
 
     private var musicTracks: List<MusicTrack> = emptyList()
@@ -33,18 +33,19 @@ class MusicTrackAdapter(
     }
 
     override fun onBindViewHolder(holder: MusicTrackAdapter.ViewHolder, position: Int) {
-        holder.bind(musicTracks[position], musicTracks)
+        holder.bind(musicTracks[position], position, musicTracks)
     }
 
     override fun getItemCount(): Int = musicTracks.size
 
     inner class ViewHolder(private val composeView: ComposeView) :
         RecyclerView.ViewHolder(composeView) {
-        fun bind(track: MusicTrack, trackList: List<MusicTrack>) {
+        fun bind(track: MusicTrack, position: Int, trackList: List<MusicTrack>) {
             composeView.setContent {
                 MusicTrackItem(
                     musicTrack = track,
                     trackList = trackList,
+                    selectedTrackIndex = position,
                     onTrackClick = onTrackClick
                 )
             }

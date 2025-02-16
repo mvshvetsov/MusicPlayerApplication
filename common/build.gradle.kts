@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.parcelize)
 }
 
 android {
@@ -59,4 +61,7 @@ dependencies {
 
     implementation(libs.com.squareup.retrofit2)
     implementation(libs.com.squareup.retrofit2.converter.gson)
+
+    implementation(libs.com.google.dagger.hilt.android)
+    ksp(libs.com.google.dagger.hilt.compiler)
 }

@@ -14,7 +14,7 @@ import ru.shvetsov.common.model.MusicTrack
 @Composable
 fun MusicTrackList(
     tracks: List<MusicTrack>,
-    onTrackClick: (List<MusicTrack>) -> Unit,
+    onTrackClick: (Int, List<MusicTrack>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current

@@ -13,8 +13,12 @@ import com.google.gson.Gson
 import ru.shvetsov.common.model.MusicTrack
 import ru.shvetsov.common.ui.screens.PermissionRequestScreen
 import ru.shvetsov.local_music_feature.presentation.LocalMusicTracksViewModel
+import ru.shvetsov.music_player_feature.presentation.screen.music_player.MusicPlayerScreen
+import ru.shvetsov.music_player_feature.presentation.screen.music_player.viewmodel.MusicPlayerViewModel
 import ru.shvetsov.remote_music_feature.presentation.viewmodel.RemoteMusicTracksViewModel
 import ru.shvetsov.track_list_common.screens.music_track.MusicListScreen
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun NavGraph(
@@ -35,8 +39,13 @@ fun NavGraph(
             MusicListScreen(
                 uiState = remoteUiState,
                 onEvent = remoteMusicTracksViewModel::onEvent,
-                onTrackClick = { trackList ->
-                    navHostController.navigate(Screen.MusicPlayer.createRoute(trackList))
+                onTrackClick = { selectedTrackIndex, trackList ->
+                    navHostController.navigate(
+                        Screen.MusicPlayer.createRoute(
+                            selectedTrackIndex,
+                            trackList
+                        )
+                    )
                 }
             )
         }
@@ -47,8 +56,13 @@ fun NavGraph(
                 MusicListScreen(
                     uiState = localUiState,
                     onEvent = localViewModel::onEvent,
-                    onTrackClick = { trackList ->
-                        navHostController.navigate(Screen.MusicPlayer.createRoute(trackList))
+                    onTrackClick = { selectedTrackIndex, trackList ->
+                        navHostController.navigate(
+                            Screen.MusicPlayer.createRoute(
+                                selectedTrackIndex,
+                                trackList
+                            )
+                        )
                     }
                 )
             } else {
@@ -57,13 +71,36 @@ fun NavGraph(
         }
         composable(
             Screen.MusicPlayer.route,
-            arguments = listOf(navArgument("trackList") {
-                type = NavType.StringType
-            })
+            arguments = listOf(
+                navArgument("selectedTrackIndex") { type = NavType.IntType },
+                navArgument("trackList") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
+            val musicPlayerViewModel = hiltViewModel<MusicPlayerViewModel>()
+
+            val musicPlayerUiState = musicPlayerViewModel.uiState.collectAsStateWithLifecycle()
+            val isPlaying = musicPlayerViewModel.isPlaying.collectAsStateWithLifecycle()
+            val selectedTrackIndex = backStackEntry.arguments?.getInt("selectedTrackIndex") ?: 0
+            val progress = musicPlayerViewModel.progress.collectAsStateWithLifecycle()
+
             val trackListJson = backStackEntry.arguments?.getString("trackList") ?: ""
-            val trackList = Gson().fromJson(trackListJson, Array<MusicTrack>::class.java).toList()
-            //MusicPlayerScreen(trackList)
+            val decodedTrackListJson = URLDecoder.decode(trackListJson, StandardCharsets.UTF_8.toString())
+            val trackList = Gson().fromJson(decodedTrackListJson, Array<MusicTrack>::class.java).toList()
+
+            val elapsedTime = musicPlayerViewModel.elapsedTime.collectAsStateWithLifecycle()
+            val trackDuration = musicPlayerViewModel.trackDuration.collectAsStateWithLifecycle()
+
+            musicPlayerViewModel.savedStateHandle["selectedTrackIndex"] = selectedTrackIndex
+            musicPlayerViewModel.savedStateHandle["trackList"] = trackList
+
+            MusicPlayerScreen(
+                uiState = musicPlayerUiState,
+                onEvent = musicPlayerViewModel::onEvent,
+                isPlaying = isPlaying,
+                progress = progress,
+                elapsedTime = elapsedTime,
+                trackDuration = trackDuration
+            )
         }
     }
 }
