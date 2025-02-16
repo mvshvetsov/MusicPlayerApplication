@@ -61,6 +61,9 @@ dependencies {
     implementation(project(":local_music_feature:data"))
     implementation(project(":local_music_feature:domain"))
     implementation(project(":local_music_feature:presentation"))
+    implementation(project(":music_player_feature:data"))
+    implementation(project(":music_player_feature:domain"))
+    implementation(project(":music_player_feature:presentation"))
     implementation(project(":track_list_common"))
 
     implementation(libs.androidx.core.ktx)

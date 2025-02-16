@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="something_went_wrong">something_went_wrong</string>
+    <string name="album_cover">Album cover</string>
+    <string name="unknown_track_title">Unknown track title</string>
+    <string name="unknown_album_title">Unknown album title</string>
+    <string name="unknown_artist_name">Unknown artist name</string>
+    <string name="previous">Previous</string>
+    <string name="play_pause">Play/pause</string>
+    <string name="next">Next</string>
+</resources>

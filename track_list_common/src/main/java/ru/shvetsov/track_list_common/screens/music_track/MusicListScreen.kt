@@ -42,7 +42,7 @@ import ru.shvetsov.track_list_common.state.MusicTrackUiState
 fun MusicListScreen(
     uiState: State<MusicTrackUiState>,
     onEvent: (MusicTrackEvent) -> Unit,
-    onTrackClick: (List<MusicTrack>) -> Unit
+    onTrackClick: (Int, List<MusicTrack>) -> Unit
 ) {
 
     val stringQuery = rememberSaveable { mutableStateOf("") }

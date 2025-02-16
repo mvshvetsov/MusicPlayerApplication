@@ -33,7 +33,8 @@ import ru.shvetsov.track_list_common.R
 fun MusicTrackItem(
     musicTrack: MusicTrack,
     trackList: List<MusicTrack>,
-    onTrackClick: (List<MusicTrack>) -> Unit
+    selectedTrackIndex: Int,
+    onTrackClick: (Int, List<MusicTrack>) -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -41,7 +42,7 @@ fun MusicTrackItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onTrackClick(trackList) }
+            .clickable { onTrackClick(selectedTrackIndex, trackList) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

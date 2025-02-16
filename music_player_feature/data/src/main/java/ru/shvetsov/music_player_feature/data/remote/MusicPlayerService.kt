@@ -9,5 +9,5 @@ import ru.shvetsov.music_player_feature.data.models.RemoteMusicTrackResponse
 interface MusicPlayerService {
 
     @GET("track/{id}")
-    suspend fun getTrackById(@Path("id") id: Int): Response<RemoteMusicTrackResponse>
+    suspend fun getTrackById(@Path("id") id: Long): Response<RemoteMusicTrackResponse>
 }
